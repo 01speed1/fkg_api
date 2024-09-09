@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS Report (
 
 CREATE TABLE IF NOT EXISTS Role (
   id bigint NOT NULL PRIMARY KEY DEFAULT nextval('role_id_seq'),
-  name varchar NOT NULL
+  name varchar NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS Service (
@@ -60,10 +60,10 @@ CREATE TABLE IF NOT EXISTS Transaction (
   start_date date NOT NULL,
   mount numeric
 );
-
 CREATE TABLE IF NOT EXISTS Users (
   id bigint NOT NULL PRIMARY KEY DEFAULT nextval('users_id_seq'),
-  username varchar NOT NULL,
+  username varchar NOT NULL UNIQUE,
+  email varchar NOT NULL UNIQUE,
   hashed_password varchar,
   role_id bigint
 );
@@ -75,6 +75,27 @@ CREATE TABLE IF NOT EXISTS SupportCases (
   user_support_id bigint,
   details bigint
 );
+
+-- Insert roles
+INSERT INTO Role (name) VALUES ('Admin')
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO Role (name) VALUES ('Support')
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO Role (name) VALUES ('Developer')
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO Role (name) VALUES ('Customer')
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO Role (name) VALUES ('Supplier')
+ON CONFLICT (name) DO NOTHING;
+
+-- Insert admin user
+INSERT INTO Users (username, email, hashed_password, role_id)
+VALUES ('admin', 'admin@example.com', 'hashed_password_here', (SELECT id FROM Role WHERE name = 'Admin'))
+ON CONFLICT (username) DO NOTHING;
 
 /* ALTER TABLE Customer ADD CONSTRAINT Customer_id_fk FOREIGN KEY (industry_id) REFERENCES Industry (id);
 ALTER TABLE Industry ADD CONSTRAINT Industry_id_fk FOREIGN KEY (id) REFERENCES Customer (industry_id);

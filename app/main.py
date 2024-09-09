@@ -1,26 +1,19 @@
-from typing import Union
+import os
 from fastapi import FastAPI
-import psycopg
+
+from dotenv import load_dotenv
+
+from app.api.v1.endpoints.users import router as user_router
+from app.api.v1.endpoints.signup import router as signup_router
+
+env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
+load_dotenv(dotenv_path=env_path)
 
 app = FastAPI()
 
-DATABASE_URL = "postgresql://postgres:password@postgres_db:5432/postgres"
+app.include_router(user_router)
+app.include_router(signup_router)
 
-@app.on_event("startup")
-async def startup():
-    global conn
-    conn = await psycopg.AsyncConnection.connect(DATABASE_URL)
-
-@app.on_event("shutdown")
-async def shutdown():
-    await conn.close()
-
-@app.get("/")
-async def root():
-    try:
-        async with conn.cursor() as cur:
-            await cur.execute("SELECT 1")
-            result = await cur.fetchone()
-        return {"status": "Connection successful", "result": result}
-    except Exception as e:
-        return {"status": "Connection failed", "error": str(e)}
+@app.get("/hello")
+def read_hello() -> dict:
+  return {"message": "Hello, world!"}
