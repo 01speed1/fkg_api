@@ -1,6 +1,6 @@
 from app.models.user import UserModel
 from app.schemas.user import UserSignup, UserInDB, UserCreate
-from app.utils.security import encrypt_password
+from app.utils.security import encrypt_password, verify_password
 
 async def signup_user(user_data: UserSignup) -> UserInDB:
     user_model = UserModel()
@@ -22,8 +22,22 @@ async def signup_user(user_data: UserSignup) -> UserInDB:
     created_user = await user_model.create(new_user)
     return created_user
   
+async def login_user(username: str, password: str) -> UserInDB:
+  user_model = UserModel()
+  
+  user = await user_model.exists(username)
+    
+  if not user or not verify_password(password, user.hashed_password):
+    raise InvalidCredentialsException("Invalid username or password")
+  
+  return user
+
+class InvalidCredentialsException(Exception):
+  def __init__(self, message="Invalid username or password"):
+    self.message = message
+    super().__init__(self.message)
+
 class UserAlreadyExistsException(Exception):
-    """Exception raised when a user already exists."""
     def __init__(self, message="User already exists"):
         self.message = message
         super().__init__(self.message)
