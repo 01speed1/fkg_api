@@ -29,7 +29,7 @@ def test_sign_up_success(mocker, user_data):
   
   mocker.patch("app.db.connections.postgres.insert",expected_insert_async_mock)
     
-  response = client.post("/sign_up", json=user_data)
+  response = client.post("/api/v1/signup", json=user_data)
       
   assert response.status_code == 201
   assert response.json() == {'status': 'success', 'message': 'User created successfully'}
@@ -37,7 +37,7 @@ def test_sign_up_success(mocker, user_data):
 def test_sign_up_existing_user(mocker, user_data):
   mocker.patch("app.db.connections.postgres.fetch_one", return_value=True)
 
-  response = client.post("/sign_up", json=user_data)
+  response = client.post("/api/v1/signup", json=user_data)
   assert response.status_code == 409
   assert response.json() == {"detail": "User already exists"}
 
@@ -50,5 +50,5 @@ def invalid_user_data():
   }
 
 def test_sign_up_invalid_data(invalid_user_data):
-  response = client.post("/sign_up", json=invalid_user_data)
+  response = client.post("/api/v1/signup", json=invalid_user_data)
   assert response.status_code == 422

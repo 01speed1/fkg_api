@@ -9,8 +9,6 @@ DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_NAME = os.getenv('DB_NAME')
 TESTING = os.getenv('TESTING', 'False').lower() in ('true', '1', 't')
 
-print(DATABASE_URL)
-
 async def init_connection():
   print("Connecting to Postgres database...")
   conn = await psycopg.AsyncConnection.connect(

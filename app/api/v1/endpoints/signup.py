@@ -10,7 +10,7 @@ class SigUpResponse(BaseModel):
   status: str
   message: str
 
-@router.post("/sign_up", response_model=SigUpResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=SigUpResponse, status_code=status.HTTP_201_CREATED)
 async def sign_up(user_data: UserSignup):
   try:
     await signup_user(user_data)
