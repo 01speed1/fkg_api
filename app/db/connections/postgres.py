@@ -29,7 +29,7 @@ async def fetch(query, values):
 
 async def fetch_one(query, values):
   async with await init_connection() as conn:
-    async with conn.cursor() as cur:
+    async with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
       await cur.execute(query, values)
       result = await cur.fetchone()
       return result

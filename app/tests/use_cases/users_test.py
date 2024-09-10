@@ -87,7 +87,7 @@ async def test_login_user_success(mocker):
 @pytest.mark.asyncio
 async def test_login_user_invalid_username(mocker):
   mocker.patch('app.models.user.UserModel.exists', return_value=None)
-  
+
   with pytest.raises(InvalidCredentialsException, match='Invalid username or password'):
     await login_user("invaliduser", "password123")
 
@@ -102,6 +102,6 @@ async def test_login_user_invalid_password(mocker):
   )
   mocker.patch('app.models.user.UserModel.exists', return_value=expected_user)
   mocker.patch('app.utils.security.verify_password', return_value=False)
-  
+
   with pytest.raises(InvalidCredentialsException, match='Invalid username or password'):
     await login_user("testuser", "wrongpassword")

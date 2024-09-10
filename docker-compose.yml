@@ -1,19 +1,20 @@
 services:
   main:
     build: .
-    container_name: fastapi_app
+    # container_name: fastapi_app
     ports:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=postgresql://postgres:password@postgres_db:5432/postgres
+    #environment:
+    #  - DATABASE_URL=postgresql://postgres:password@db:5432/postgres
+    env_file:
+      - .env
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    
 
   db:
     image: postgres:13
-    container_name: postgres_db
+    #container_name: postgres_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password

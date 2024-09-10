@@ -25,12 +25,17 @@ async def signup_user(user_data: UserSignup) -> UserInDB:
 async def login_user(username: str, password: str) -> UserInDB:
   user_model = UserModel()
   
-  user = await user_model.exists(username)
-    
-  if not user or not verify_password(password, user.hashed_password):
+  user_exists = await user_model.exists(username)
+  
+  if not user_exists:
     raise InvalidCredentialsException("Invalid username or password")
   
-  return user
+  found_user = await user_model.get_by_username(username)
+    
+  if not user_exists or not verify_password(password, found_user.hashed_password):
+    raise InvalidCredentialsException("Invalid username or password")
+  
+  return found_user
 
 class InvalidCredentialsException(Exception):
   def __init__(self, message="Invalid username or password"):

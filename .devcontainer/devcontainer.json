@@ -1,0 +1,28 @@
+{
+  "name": "Mi Contenedor de API",
+  "workspaceFolder": "/code",
+  "mounts": [
+    {
+      "source": "${localWorkspaceFolder}",
+      "target": "/code",
+      "type": "bind"
+    }
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "extensions": [
+          "ms-python.python"
+        ]
+      }
+    }
+  },
+  "postCreateCommand": "pip install -r /code/requirements.txt",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "main",
+  "runServices": [
+    "db",
+    "pgadmin"
+  ],
+  "overrideCommand": true
+}
