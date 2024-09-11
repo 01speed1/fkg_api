@@ -23,9 +23,8 @@ def test_create_support_case_success(mocker, valid_token, support_case_data):
   mocker.patch("app.models.support_case.SupportCaseModel.create", AsyncMock(return_value={"id": 1}))
 
   response = client.post(
-    "/api/v1/support-cases",
-    json=support_case_data,
-    headers={"Authorization": f"Bearer {valid_token}"}
+    f"/api/v1/support-cases?token={valid_token}",
+    json=support_case_data
   )
 
   assert response.status_code == 201
@@ -33,24 +32,22 @@ def test_create_support_case_success(mocker, valid_token, support_case_data):
 
 
 def test_create_support_case_missing_token(support_case_data):
-  response = client.post("/api/v1/support-cases", json=support_case_data)
+  response = client.post(f"/api/v1/support-cases?token=", json=support_case_data)
   assert response.status_code == 401
-  assert response.json() == {"detail": "Not authenticated"}
+  assert response.json() == {"detail": "Invalid authentication credentials"}
 
 
 def test_create_support_case_missing_title(valid_token):
   response = client.post(
-    "/api/v1/support-cases",
-    json={"details": "Details of the support case"},
-    headers={"Authorization": f"Bearer {valid_token}"}
+    f"/api/v1/support-cases?token={valid_token}",
+    json={"details": "Details of the support case"}
   )
   assert response.status_code == 422
 
 
 def test_create_support_case_missing_details(valid_token):
   response = client.post(
-    "/api/v1/support-cases",
-    json={"title": "Test Support Case"},
-    headers={"Authorization": f"Bearer {valid_token}"}
+    f"/api/v1/support-cases?token={valid_token}",
+    json={"title": "Test Support Case"}
   )
   assert response.status_code == 422

@@ -47,7 +47,8 @@ def test_login_success(mocker, mocked_user, expected_password, monkeypatch):
   
   response = client.post(
     "/api/v1/login", 
-    json={"username": "testuser", "password": expected_password}
+    data={"username": "testuser", "password": expected_password},
+    headers={"Content-Type": "application/x-www-form-urlencoded"}
   )
 
   assert response.status_code == 200
@@ -58,8 +59,12 @@ def test_login_success(mocker, mocked_user, expected_password, monkeypatch):
 def test_login_invalid_credentials(mocker, mocked_user):
   mocker.patch('app.models.user.UserModel.exists', mocked_user)
 
-  response = client.post("/api/v1/login", json={"username": "wronguser", "password": "wrongpassword"})
-    
+  response = client.post(
+    "/api/v1/login",
+    data={"username": "wronguser", "password": "wrongpassword"},
+    headers={"Content-Type": "application/x-www-form-urlencoded"}
+  )
+  
   assert response.status_code == 401
   assert response.json() == {"detail": "Invalid username or password"}
 
