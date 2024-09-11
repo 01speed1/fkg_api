@@ -1,4 +1,5 @@
 CREATE SEQUENCE IF NOT EXISTS customer_id_seq;
+CREATE SEQUENCE IF NOT EXISTS customer_id_seq;
 CREATE SEQUENCE IF NOT EXISTS industry_id_seq;
 CREATE SEQUENCE IF NOT EXISTS product_id_seq;
 CREATE SEQUENCE IF NOT EXISTS report_id_seq;
@@ -7,7 +8,7 @@ CREATE SEQUENCE IF NOT EXISTS service_id_seq;
 CREATE SEQUENCE IF NOT EXISTS supplier_id_seq;
 CREATE SEQUENCE IF NOT EXISTS transaction_id_seq;
 CREATE SEQUENCE IF NOT EXISTS users_id_seq;
-CREATE SEQUENCE IF NOT EXISTS supportcases_id_seq;
+CREATE SEQUENCE IF NOT EXISTS support_cases_id_seq;
 
 CREATE TABLE IF NOT EXISTS Customer (
   id bigint NOT NULL PRIMARY KEY DEFAULT nextval('customer_id_seq'),
@@ -17,7 +18,8 @@ CREATE TABLE IF NOT EXISTS Customer (
 );
 
 CREATE TABLE IF NOT EXISTS Industry (
-  id bigint NOT NULL PRIMARY KEY DEFAULT nextval('industry_id_seq')
+  id bigint NOT NULL PRIMARY KEY DEFAULT nextval('industry_id_seq'),
+  name varchar NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Product (
@@ -39,7 +41,7 @@ CREATE TABLE IF NOT EXISTS Role (
 
 CREATE TABLE IF NOT EXISTS Service (
   id bigint NOT NULL PRIMARY KEY DEFAULT nextval('service_id_seq'),
-  name varchar
+  name varchar NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Supplier (
@@ -60,6 +62,7 @@ CREATE TABLE IF NOT EXISTS Transaction (
   start_date date NOT NULL,
   mount numeric
 );
+
 CREATE TABLE IF NOT EXISTS Users (
   id bigint NOT NULL PRIMARY KEY DEFAULT nextval('users_id_seq'),
   username varchar NOT NULL UNIQUE,
@@ -68,14 +71,30 @@ CREATE TABLE IF NOT EXISTS Users (
   role_id bigint
 );
 
-CREATE TABLE IF NOT EXISTS SupportCases (
-  id bigint NOT NULL PRIMARY KEY DEFAULT nextval('supportcases_id_seq'),
+CREATE TABLE IF NOT EXISTS Support_Cases (
+  id bigint NOT NULL PRIMARY KEY DEFAULT nextval('support_cases_id_seq'),
   user_reporter_id bigint,
-  status bigint,
+  status varchar,
   user_support_id bigint,
-  details bigint
+  details text,
+  type varchar,
+  title varchar
 );
 
+ALTER TABLE Product ADD COLUMN title varchar;
+
+
+/* ALTER TABLE Customer ADD CONSTRAINT Customer_industry_id_fk FOREIGN KEY (industry_id) REFERENCES Industry (id);
+ALTER TABLE Industry ADD CONSTRAINT Industry_customer_id_fk FOREIGN KEY (id) REFERENCES Customer (industry_id);
+ALTER TABLE Product ADD CONSTRAINT Product_supplier_id_fk FOREIGN KEY (id) REFERENCES Supplier (product_id);
+ALTER TABLE Role ADD CONSTRAINT Role_users_id_fk FOREIGN KEY (id) REFERENCES Users (role_id);
+ALTER TABLE Service ADD CONSTRAINT Service_report_id_fk FOREIGN KEY (id) REFERENCES Report (service_id);
+ALTER TABLE Transaction ADD CONSTRAINT Transaction_customer_id_fk FOREIGN KEY (customer_id) REFERENCES Customer (id);
+ALTER TABLE Transaction ADD CONSTRAINT Transaction_service_id_fk FOREIGN KEY (service_id) REFERENCES Service (id);
+ALTER TABLE Transaction ADD CONSTRAINT Transaction_supplier_id_fk FOREIGN KEY (supplier_id) REFERENCES Supplier (id);
+ALTER TABLE Users ADD CONSTRAINT Users_support_cases_reporter_fk FOREIGN KEY (id) REFERENCES Support_Cases (user_reporter_id);
+ALTER TABLE Users ADD CONSTRAINT Users_support_cases_support_fk FOREIGN KEY (id) REFERENCES Support_Cases (user_support_id);
+ */
 -- Insert roles
 INSERT INTO Role (name) VALUES ('Admin')
 ON CONFLICT (name) DO NOTHING;
@@ -92,19 +111,7 @@ ON CONFLICT (name) DO NOTHING;
 INSERT INTO Role (name) VALUES ('Supplier')
 ON CONFLICT (name) DO NOTHING;
 
--- Insert admin user
+-- Insert admin user (hasshed password is 'pass')
 INSERT INTO Users (username, email, hashed_password, role_id)
-VALUES ('admin', 'admin@example.com', 'hashed_password_here', (SELECT id FROM Role WHERE name = 'Admin'))
+VALUES ('admin', 'admin@example.com', '$2b$12$eI2tIO0aP3zHOAJtKDW/sOiRb8.URqnlxNzhnKjxUSuzweYEyFFkC', (SELECT id FROM Role WHERE name = 'Admin'))
 ON CONFLICT (username) DO NOTHING;
-
-/* ALTER TABLE Customer ADD CONSTRAINT Customer_id_fk FOREIGN KEY (industry_id) REFERENCES Industry (id);
-ALTER TABLE Industry ADD CONSTRAINT Industry_id_fk FOREIGN KEY (id) REFERENCES Customer (industry_id);
-ALTER TABLE Product ADD CONSTRAINT Product_id_fk FOREIGN KEY (product_id) REFERENCES Supplier (id);
-ALTER TABLE Role ADD CONSTRAINT Role_id_fk FOREIGN KEY (role_id) REFERENCES Users (id);
-ALTER TABLE Service ADD CONSTRAINT Service_id_fk FOREIGN KEY (service_id) REFERENCES Report (id);
-ALTER TABLE Transaction ADD CONSTRAINT Transaction_customer_id_fk FOREIGN KEY (customer_id) REFERENCES Customer (id);
-ALTER TABLE Transaction ADD CONSTRAINT Transaction_service_id_fk FOREIGN KEY (service_id) REFERENCES Service (id);
-ALTER TABLE Transaction ADD CONSTRAINT Transaction_supplier_id_fk FOREIGN KEY (supplier_id) REFERENCES Supplier (id);
-ALTER TABLE Users ADD CONSTRAINT Users_user_reporter_id_fk FOREIGN KEY (id) REFERENCES SupportCases (user_reporter_id);
-ALTER TABLE Users ADD CONSTRAINT Users_user_support_id_fk FOREIGN KEY (id) REFERENCES SupportCases (user_support_id);
-*/

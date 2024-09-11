@@ -7,11 +7,14 @@ class UserBase(BaseModel):
 class UserSignup(UserBase):
   password: str
   role_id: int
+  
+class UserLogin(UserBase):
+  password: str
 
 class UserCreate(UserBase):
   hashed_password: str
   role_id: int
-  
+
   model_config = ConfigDict(from_attributes=True)
 
 class UserUpdate(UserBase):

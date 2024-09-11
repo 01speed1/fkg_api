@@ -12,14 +12,14 @@ class UserModel:
   async def exists(self, username: str = "", email: str = "") -> bool:
     query = "SELECT 1 FROM users WHERE username = %s OR email = %s"
     found_user = await db.fetch_one(query, (username, email,))
-        
+
     return found_user is not None
 
   async def get_by_username(self, username: str) -> UserInDB:
     query = "SELECT * FROM users WHERE username = %s"
     user = await db.fetch_one(query, (username,))
-    
+
     if user is None:
       return None
-    
+
     return UserInDB(**user)

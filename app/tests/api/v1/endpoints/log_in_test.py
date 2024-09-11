@@ -42,8 +42,8 @@ def mocked_user(mocker, expected_password, expected_hashed_password):
 def test_login_success(mocker, mocked_user, expected_password, monkeypatch): 
   monkeypatch.setenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
   monkeypatch.setenv("SECRET_KEY", "testSecret")
-   
-  mocker.patch('app.models.user.UserModel.exists', mocked_user)
+
+  mocker.patch('app.models.user.UserModel.get_by_username', mocked_user)
   
   response = client.post(
     "/api/v1/login", 
