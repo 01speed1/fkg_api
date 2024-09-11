@@ -13,7 +13,6 @@ Please note that since the API is hosted on a free plan on Render, it may take s
 
 Make sure to wait for a few moments if you encounter any delays when accessing the API.
 
-
 ## Documentation
 
 You can access the documentation for the API endpoints at [https://fkg-api.onrender.com/docs](https://fkg-api.onrender.com/docs). This provides detailed information about each endpoint, including request and response schemas, as well as the ability to interact with the API directly from the documentation page.
@@ -51,11 +50,12 @@ To set up a development environment with a custom Python 3.9 image and a Postgre
 
    The API will be available at [http://localhost:8000](http://localhost:8000).
 
+  **Important Note**: The API has only been tested and developed within containers. I cannot guarantee that it will function properly outside of this environment.
+
 5. **Setup in Visual Studio Code:**
 
    Open the project in Visual Studio Code and make sure you have the following extensions installed:
 
-   - Python
    - Docker
 
    You can use the [`devcontainer.json`](command:_github.copilot.openRelativePath?%5B%7B%22scheme%22%3A%22file%22%2C%22authority%22%3A%22%22%2C%22path%22%3A%22%2Fhome%2Foscar%2FProjects%2FFKG%2Ffkg_api%2F.devcontainer%2Fdevcontainer.json%22%2C%22query%22%3A%22%22%2C%22fragment%22%3A%22%22%7D%2C%22b1f3bfa7-82d5-4e5b-8e6f-91a36a7be344%22%5D "/home/oscar/Projects/FKG/fkg_api/.devcontainer/devcontainer.json") file to configure a custom development container.
@@ -88,11 +88,51 @@ To set up a development environment with a custom Python 3.9 image and a Postgre
 
 Continue in the next prompt to add more details.
 
+## Testing
+
+To add tests to the web client, follow these instructions:
+
+1. **Run the tests:**
+
+Use the following command to run the tests and generate a coverage report:
+
+```bash
+docker-compose run --rm main /bin/sh -c "pytest --cov=app --cov-report=html && python -m webbrowser -t htmlcov/index.html"
+```
+
+If the browser doesn't open automatically, you can manually open the coverage report by running:
+
+```bash
+open htmlcov/index.html
+```
+
+This will open the coverage report in your default browser.
+
+2. **Review the coverage report:**
+
+The coverage report will show the test coverage for the web client. Make sure to review it and ensure that the tests cover all the necessary functionality.
+
+Note: It's recommended to aim for high test coverage to ensure the reliability and stability of the web client.
+
+## Populating the Database
+
+To populate the database when the PostgreSQL container starts, you can provide an `init.sql` file in the root directory of your project. The container will automatically execute this file during container creation.
+
+Here are the steps to follow:
+
+1. Create an `init.sql` file in the root directory of your project.
+
+2. Add the necessary SQL statements to populate the database in the `init.sql` file. For example, you can include `INSERT` statements to add initial data.
+
+3. When the PostgreSQL container starts, it will automatically execute the `init.sql` file and populate the database with the specified data.
+
+Make sure to include the `init.sql` file in your project's version control system so that it is available when deploying or running the application.
+
+Remember to adjust the SQL statements in the `init.sql` file according to your specific database schema and requirements.
+
 ## Additional Notes
 
-* Although the API has integrated tests in most files, it does not achieve 100% coverage.
-* I would have liked to manage the relationships between tables better, but as I was writing the code, I didn't see it necessary for the objective.
-* Several ideas were left out, such as the possibility of replicating the company's business logic and allowing the web interface to communicate with and modify the database directly.
-* I tested everything under containers, so I cannot guarantee that the application will run correctly if you install Python and PostgreSQL directly on your machine.
-
-
+- Although the API has integrated tests in most files, it does not achieve 100% coverage.
+- I would have liked to manage the relationships between tables better, but as I was writing the code, I didn't see it necessary for the objective.
+- Several ideas were left out, such as the possibility of replicating the company's business logic and allowing the web interface to communicate with and modify the database directly.
+- I tested everything under containers, so I cannot guarantee that the application will run correctly if you install Python and PostgreSQL directly on your machine.
