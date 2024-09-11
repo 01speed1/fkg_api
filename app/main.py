@@ -26,3 +26,8 @@ app.include_router(api_v1_router, prefix="/api/v1")
 def home_page(response: Response) -> dict:
   response.status_code = 200
   return {"status": "ok"}
+
+if __name__ == "__main__":
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host=host, port=port)
